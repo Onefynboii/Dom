@@ -1,85 +1,118 @@
-const product = [
-    {
-        id: 0,
-        image: 'gg-1.jpg',
-        title: 'Z Flip Foldable Mobile',
-        price: 120,
-    },
-    {
-        id: 1,
-        image: 'hh-2.jpg',
-        title: 'Air Pods Pro',
-        price: 60,
-    },
-    {
-        id: 2,
-        image: 'ee-3.jpg',
-        title: '250D DSLR Camera',
-        price: 230,
-    },
-    {
-        id: 3,
-        image: 'aa-1.jpg',
-        title: 'Head Phones',
-        price: 100,
-    }
+// Get references to the necessary elements
+const cartItemsEl = document.getElementById('cart-items');
+const totalPriceEl = document.getElementById('total-price');
+
+// Sample data for cart items
+const cartItems = [
+  { id: 1, name: 'Head Phones', price: 9.99, quantity: 1, liked: false },
+  { id: 2, name: '250D DSLR Camera', price: 14.99, quantity: 2, liked: true },
+  { id: 3, name: 'Z Flip Foldabale Mobile ', price: 19.99, quantity: 1, liked: false },
 ];
-const categories = [...new Set(product.map((item)=>
-    {return item}))]
-    let i=0;
-document.getElementById('root').innerHTML = categories.map((item)=>
-{
-    var {image, title, price} = item;
-    return(
-        `<div class='box'>
-            <div class='img-box'>
-                <img class='images' src=${image}></img>
-            </div>
-        <div class='bottom'>
-        <p>${title}</p>
-        <h2>$ ${price}.00</h2>`+
-        "<button onclick='addtocart("+(i++)+")'>Add to cart</button>"+
-        `</div>
-        </div>`
-    )
-}).join('')
 
-var cart =[];
+// Function to render the cart items
+function renderCartItems() {
+  cartItemsEl.innerHTML = '';
+  let totalPrice = 0;
 
-function addtocart(a){
-    cart.push({...categories[a]});
-    displaycart();
-}
-function delElement(a){
-    cart.splice(a, 1);
-    displaycart();
-}
+  cartItems.forEach((item) => {
+    const cartItemEl = document.createElement('li');
+    cartItemEl.classList.add('cart-item');
 
-function displaycart(){
-    let j = 0, total=0;
-    document.getElementById("count").innerHTML=cart.length;
-    if(cart.length==0){
-        document.getElementById('cartItem').innerHTML = "Your cart is empty";
-        document.getElementById("total").innerHTML = "$ "+0+".00";
+    const cartItemInfoEl = document.createElement('div');
+    cartItemInfoEl.classList.add('cart-item-info');
+
+    const imgEl = document.createElement('img');
+  imgEl.src = `images/${item.id}.jpg`; 
+  imgEl.alt = item.name;
+  imgEl.classList.add('product-image');
+
+    const cartItemNameEl = document.createElement('h3');
+    cartItemNameEl.textContent = item.name;
+
+    const cartItemPriceEl = document.createElement('span');
+    cartItemPriceEl.classList.add('cart-item-price');
+    cartItemPriceEl.textContent = `$${item.price.toFixed(2)}`;
+
+    cartItemInfoEl.appendChild(imgEl);
+
+    const cartItemActionsEl = document.createElement('div');
+    cartItemActionsEl.classList.add('cart-item-actions');
+
+    const decrementBtn = document.createElement('button');
+    decrementBtn.textContent = '-';
+    decrementBtn.addEventListener('click', () => decrementQuantity(item.id));
+
+    const quantityEl = document.createElement('span');
+    quantityEl.textContent = item.quantity;
+
+    const incrementBtn = document.createElement('button');
+    incrementBtn.textContent = '+';
+    incrementBtn.addEventListener('click', () => incrementQuantity(item.id));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', () => deleteItem(item.id));
+
+    const likeBtnEl = document.createElement('button');
+    likeBtnEl.classList.add('like-btn');
+    likeBtnEl.innerHTML = '<i class="fa-regular fa-heart"></i>';
+    if (item.liked) {
+      likeBtnEl.classList.add('liked');
+      likeBtnEl.innerHTML = '<i class="fa-solid fa-heart"></i>';
     }
-    else{
-        document.getElementById("cartItem").innerHTML = cart.map((items)=>
-        {
-            var {image, title, price} = items;
-            total=total+price;
-            document.getElementById("total").innerHTML = "$ "+total+".00";
-            return(
-                `<div class='cart-item'>
-                <div class='row-img'>
-                    <img class='rowimg' src=${image}>
-                </div>
-                <p style='font-size:12px;'>${title}</p>
-                <h2 style='font-size: 15px;'>$ ${price}.00</h2>`+
-                "<i class='fa-solid fa-trash' onclick='delElement("+ (j++) +")'></i></div>"
-            );
-        }).join('');
-    }
+    likeBtnEl.addEventListener('click', () => toggleLike(item.id));
 
-    
+    cartItemActionsEl.appendChild(decrementBtn);
+    cartItemActionsEl.appendChild(quantityEl);
+    cartItemActionsEl.appendChild(incrementBtn);
+    cartItemActionsEl.appendChild(deleteBtn);
+    cartItemActionsEl.appendChild(likeBtnEl);
+
+    cartItemInfoEl.appendChild(cartItemNameEl);
+    cartItemInfoEl.appendChild(cartItemPriceEl);
+
+    cartItemEl.appendChild(cartItemInfoEl);
+    cartItemEl.appendChild(cartItemActionsEl);
+
+    cartItemsEl.appendChild(cartItemEl);
+
+    totalPrice += item.price * item.quantity;
+  });
+
+  totalPriceEl.textContent = `Total: $${totalPrice.toFixed(2)}`;
 }
-    
+
+// Function to increment item quantity
+function incrementQuantity(itemId) {
+  const item = cartItems.find((item) => item.id === itemId);
+  item.quantity++;
+  renderCartItems();
+}
+
+// Function to decrement item quantity
+function decrementQuantity(itemId) {
+  const item = cartItems.find((item) => item.id === itemId);
+  if (item.quantity > 1) {
+    item.quantity--;
+    renderCartItems();
+  }
+}
+
+// Function to delete an item from the cart
+function deleteItem(itemId) {
+  const itemIndex = cartItems.findIndex((item) => item.id === itemId);
+  if (itemIndex !== -1) {
+    cartItems.splice(itemIndex, 1);
+    renderCartItems();
+  }
+}
+
+// Function to toggle item like status
+function toggleLike(itemId) {
+  const item = cartItems.find((item) => item.id === itemId);
+  item.liked = !item.liked;
+  renderCartItems();
+}
+
+// Initial render of the cart items
+renderCartItems();

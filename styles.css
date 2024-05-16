@@ -1,0 +1,65 @@
+body{
+    background-color: gold;
+  }
+  
+  .cart-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      
+    }
+    
+    .cart-items {
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+    }
+    
+    .cart-item-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .cart-item-actions {
+      margin-top: 10px;
+      align-items: center;
+    }
+    
+    .cart-item-actions button {
+      margin-right: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+    }
+    
+    .cart-item-actions button:hover {
+      background-color: #ddd;
+    }
+    
+    .cart-item-price {
+      font-weight: bold;
+    }
+    
+    .like-btn {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    
+    .like-btn i {
+      font-size: 20px;
+    }
+    
+    .like-btn.liked i {
+      color: red; /* Change color to red when liked */
+    }
+  
+    .product-image {
+      width: 50px; 
+      height: auto; /* Maintain aspect ratio */
+      margin-right: 10px; /* Add spacing between image and text */
+    }
